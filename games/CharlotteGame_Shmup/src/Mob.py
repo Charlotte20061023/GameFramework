@@ -7,9 +7,8 @@ from mlgame.view.view_model import create_image_view_data, create_asset_init_dat
 from .env import IMAGE_DIR
 Vec = pygame.math.Vector2
 
-'''PLAYER_PATH = path.join(path.dirname(__file__), "..", "asset", "image", "")'''
 
-class Player(pygame.sprite.Sprite):
+class Mob(pygame.sprite.Sprite):
     def __init__(self, construction: dict, **kwargs):
         """
         初始化玩家資料
@@ -18,7 +17,7 @@ class Player(pygame.sprite.Sprite):
         :param kwargs:
         """
         super().__init__()
-        self.image_id = "1P"
+        self.image_id = "Mob"
         self._id = construction["_id"]
         self._no = construction["_no"]
         self.rect = pygame.Rect(construction["_init_pos"], construction["_init_size"])
@@ -37,14 +36,11 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, command: dict) -> None:
 
-        if "RIGHT" in command["1P"]:
+        if self.rect.x < 900:
             self.rect.x += 10
-        if "LEFT" in command["1P"]:
+        if self.rect.x >= 900:
             self.rect.x -= 10
-        if "UP" in command["1P"]:
-            self.rect.y -= 10
-        if "DOWN" in command["1P"]:
-            self.rect.y += 10
+
 
         '''
         self._used_frame += 1
@@ -181,7 +177,7 @@ class Player(pygame.sprite.Sprite):
         使用view_model函式，建立符合mlgame物件更新資料格式的資料，在遊戲主程式更新畫面資訊時被調用
         :return:
         """
-        image_data = create_image_view_data(f"{self._id}P", *self.rect.topleft, self.rect.width, self.rect.height, self._angle)
+        image_data = create_image_view_data(f"mob", *self.rect.topleft, self.rect.width, self.rect.height, self._angle)
         return image_data
 
     def get_obj_init_data(self) -> dict or list:
@@ -189,8 +185,8 @@ class Player(pygame.sprite.Sprite):
         使用view_model函式，建立符合mlgame物件初始資料格式的資料，在遊戲主程式初始畫面資訊時被調用
         :return:
         """
-        image_init_data = create_asset_init_data(f"{self._id}P", self.rect.width, self.rect.height
-                                                 , path.join(IMAGE_DIR, "Mysta.jpg"), "url")
+        image_init_data = create_asset_init_data(f"mob", self.rect.width, self.rect.height
+                                                 , path.join(IMAGE_DIR, "player.png"), "url")
         return image_init_data
 
     def get_info_to_game_result(self):
@@ -199,4 +195,3 @@ class Player(pygame.sprite.Sprite):
                 , "y": self.rect.y
                 }
         return info
-

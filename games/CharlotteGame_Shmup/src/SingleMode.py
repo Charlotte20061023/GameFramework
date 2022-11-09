@@ -6,7 +6,7 @@ from mlgame.utils.enum import get_ai_name
 
 from game_module.TiledMap import create_construction
 from .Player import Player
-
+from .Mob import Mob
 
 SCENE_WIDTH = 1000
 SCENE_HEIGHT = 800
@@ -20,6 +20,7 @@ class SingleMode:
         self.scene_height = SCENE_HEIGHT
         self.play_rect_area = play_rect_area
         self.all_sprites = pygame.sprite.Group()
+        self.mobs = pygame.sprite.Group()
         self.player = Player(create_construction(get_ai_name(0), 0, (0, 0), (50, 50)))
         self.all_sprites.add(self.player)
         self.used_frame = 0
@@ -27,10 +28,15 @@ class SingleMode:
         self.status = GameStatus.GAME_ALIVE
         self.width_center = SCENE_WIDTH // 2
         self.height_center = SCENE_HEIGHT // 2
+        x=5
+        for i in range(x):
+            mob = Mob(create_construction(get_ai_name(0), 0, (i*10, i*10), (50, 50)))
+            self.mobs.add(mob)
 
     def update(self, command: dict) -> None:
         self.used_frame += 1
-        self.player.update(command)
+        # self.player.update(command)
+        self.mobs.update(command)
         if not self.player.get_is_alive():
             self.get_player_end()
 
@@ -57,8 +63,8 @@ class SingleMode:
     def check_collisions(self):
         raise Exception("Please overwrite check_collisions")
 
-    def get_init_image_data(self):
-        init_image_data = [self.player.get_obj_init_data()]
+    def get_init_image_data(self) -> list:
+        init_image_data = [self.player.get_obj_init_data(), self.mob.get_obj_init_data()]
         return init_image_data
 
     def get_ai_data_to_player(self):
@@ -74,7 +80,10 @@ class SingleMode:
         return background_view_data
 
     def get_obj_progress_data(self) -> list:
-        obj_progress_data = [self.draw_player()]
+        # obj_progress_data = [self.draw_player(), self.all_sprites.get_obj_progress_data()]
+        obj_progress_data = []
+        for i in self.all_sprites:
+            obj_progress_data.append(i.get_obj_progress_data())
         return obj_progress_data
 
     def get_bias_toggle_progress_data(self) -> list:

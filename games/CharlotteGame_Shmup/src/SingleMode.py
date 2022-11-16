@@ -22,20 +22,21 @@ class SingleMode:
         self.all_sprites = pygame.sprite.Group()
         self.mobs = pygame.sprite.Group()
         self.player = Player(create_construction(get_ai_name(0), 0, (0, 0), (50, 50)))
-        self.all_sprites.add(self.player)
+
         self.used_frame = 0
         self.state = GameResultState.FAIL
         self.status = GameStatus.GAME_ALIVE
         self.width_center = SCENE_WIDTH // 2
         self.height_center = SCENE_HEIGHT // 2
-        x=5
+        x = 5
         for i in range(x):
             mob = Mob(create_construction(get_ai_name(0), 0, (i*10, i*10), (50, 50)))
             self.mobs.add(mob)
+        self.all_sprites.add(self.player, self.mobs)
 
     def update(self, command: dict) -> None:
         self.used_frame += 1
-        # self.player.update(command)
+        self.player.update(command)
         self.mobs.update(command)
         if not self.player.get_is_alive():
             self.get_player_end()
@@ -64,7 +65,12 @@ class SingleMode:
         raise Exception("Please overwrite check_collisions")
 
     def get_init_image_data(self) -> list:
-        init_image_data = [self.player.get_obj_init_data(), self.mob.get_obj_init_data()]
+        init_image_data = [self.player.get_obj_init_data()]
+        for mob in self.mobs:
+            if isinstance(mob, Mob):
+                init_image_data.append(mob.get_obj_init_data())
+                break
+
         return init_image_data
 
     def get_ai_data_to_player(self):

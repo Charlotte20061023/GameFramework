@@ -33,15 +33,12 @@ class Mob(pygame.sprite.Sprite):
         self._vel = Vec(0, 0)
         self._is_alive = True
         self._is_shoot = False
+        self.x_speed = 10
 
     def update(self, command: dict) -> None:
-
-        if self.rect.x < 900:
-            self.rect.x += 10
-        if self.rect.x >= 900:
-            self.rect.x -= 10
-
-
+        self.rect.x += self.x_speed
+        if self.rect.x <= 0 or self.rect.right >= 850:
+            self.x_speed *= -1
         '''
         self._used_frame += 1
         self.rect.center += self._vel
@@ -53,6 +50,7 @@ class Mob(pygame.sprite.Sprite):
         if self._lives <= 0:
             self._is_alive = False
         '''
+
 
     def reset(self) -> None:
         """
@@ -135,6 +133,7 @@ class Mob(pygame.sprite.Sprite):
             self.rect.topleft = new_pos
         else:
             self.rect.topleft = self._origin_xy
+
 
     def get_xy(self) -> tuple:
         """
